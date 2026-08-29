@@ -114,3 +114,38 @@ h1 {
     margin-right: 7px;
     color: #6f7470;
 }
+
+.typing-dock {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    min-width: 320px;
+    padding: 12px 16px;
+    border: 1px solid #343737;
+    background: #0a0c0c;
+    text-align: center;
+}
+
+.typing-dock .prompt {
+    margin-right: 12px;
+    color: #737873;
+    font-size: 11px;
+}
+
+.typing-dock strong { 
+    color: #f0eee8;
+    letter-spacing: 0.08em;
+}
+
+.falling-word.target {
+    border-color: #d0a34f; 
+}
+
+.falling-word .typed {
+    color: #8fb083; 
+}
+
+.falling-word .pending { 
+    color: #e7e5df; 
+}
