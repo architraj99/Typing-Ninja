@@ -3,6 +3,79 @@ const clock = document.getElementById('clock');
 let startedAt = 0;
 let running = false;
 
+const playfield = document.getElementById('playfield');
+const wordLayer = document.getElementById('wordLayer');
+const wordBank = ['array', 'buffer', 'branch', 'canvas', 'client' , 'compile',
+    'cursor', 'debug', 'deploy', 'domain', 'encode', 'engine', 'event', 'frame',
+    'function', 'index', 'input', 'kettle', 'keyboard', 'logic', 'memory',
+    'module', 'network', 'object', 'pixel', 'process', 'render', 'script',
+    'server', 'signal', 'socket', 'source', 'string', 'system'
+ ];
+
+const fallingWords = [];
+let lastFrame = 0;
+let lastSpawn = 0;
+let spawnDelay = 1650;
+
+function randomWord() {
+    return wordBank[Math.floor(Math.random() * wordBank.length)];
+}
+
+function spawnWord() {
+    const text = randomWord();
+    const element = document.createElement('span');
+    const maxX = Math.max(40, playfield.clientWidth - 150);
+    const word = {
+        text,
+        element,
+        x: 24 + Math.random() * (maxX - 24),
+        y: -38,
+        speed: 42 + Math.random() * 24
+    };
+    element.className = 'falling-word';
+    element.textContent = text;
+    wordLayer.appendChild(element);
+    fallingWords.push(word);
+}
+
+function removeWord(word) {
+    const index = fallingWords.indexOf(word);
+    if(index !== -1) fallingWords.splice(index, 1);
+    word.element.remove();
+}
+
+function updateWords(delta){
+    const floor = playfield.clientHeight + 45;
+    for(const word of [...fallingWords]) {
+        word.y += word.speed * delta;
+        word.element.style.transform = `translate3d(${word.x}px, ${word.y}px, 0)`;
+        if(word.y > floor) removeWord(word);
+    }
+}
+
+function gameLoop(time) {
+    
+    if(!running) return;
+    const delta = Math.min((time - lastFrame) / 1000 || 0, 0.04);
+    lastFrame = time;
+    if(time - lastSpawn >= spawnDelay) {
+        spawnWord();
+        lastSpawn = time;
+    }
+    updateWords(delta);
+    requestAnimationFrame(gameLoop);
+}
+
+function startGame() {
+    running = true;
+    startedAt = Date.now();
+    lastFrame = performance.now();
+    lastSpawn = lastFrame - spawnDelay;
+    startCard.hidden = true;
+    requestAnimationFrame(gameLoop);
+    updateClock();
+}
+
 function updateClock() {
     if(!running) return;
     const seconds = Math.floor((Date.now() - startedAt) / 1000);
@@ -14,8 +87,5 @@ function updateClock() {
 
 window.addEventListener('keydown', event => {
     if(event.key !== 'Enter' || running) return;
-    running = true;
-    startedAt = Date.now();
-    startCard.hidden = true;
-    updateClock();
+    startGame();
 });

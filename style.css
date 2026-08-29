@@ -88,3 +88,29 @@ h1 {
     color: #d0a34f !important;
     letter-spacing: 0.12em;
 }
+
+.word-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.falling-word {
+    position:absolute;
+    top: 0;
+    left: 0;
+    padding: 7px 10px;
+    border: 1px solid #343737;
+    background: #121414;
+    color: #e7e5df;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transform: translate3d(0, 0, 0);
+}
+
+.falling-word::before {
+    content: ">";
+    margin-right: 7px;
+    color: #6f7470;
+}
