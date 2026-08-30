@@ -149,3 +149,55 @@ h1 {
 .falling-word .pending { 
     color: #e7e5df; 
 }
+
+.life-box strong{
+    color: #b85d5d;
+    letter-spacing: 0.14em;
+}
+
+.danger-line {
+    position: absolute;
+    right: 0;
+    bottom: 68px;
+    left: 0;
+    height: 1px;
+    border-top: 1px dashed #563636;
+    pointer-events: none;
+}
+
+.danger-line span {
+    position: absolute;
+    right: 16px;
+    top: -18px;
+    color: #7f5050;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+}
+
+.falling-word.danger {
+    border-color: #704646;
+    color: #d8b1ad;
+}
+
+.center-card.fail h2 {
+    color: #c46d67;
+}
+
+.playfield.hit {
+    box-shadow: inset 0 0 0 1px #4c2f2f;
+}
+
+.status-strip span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-strip strong {
+    font-weight: 700;
+}
+
+.life-box {
+    min-width: 132px;
+    justify-content: flex-end;
+}

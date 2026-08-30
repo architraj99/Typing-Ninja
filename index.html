@@ -17,14 +17,18 @@
                 </div>
 
                 <div class="status-strip">
-                    <span>READY</span>
-                    <strong id="clock">00:00</strong>
+                    <span>TIME <strong id="clock">00:00</strong> </span>
+                    <span class="life-box">LIVES <strong id="lives">♥ ♥ ♥</strong> </span>
                 </div>
             </header>
 
             <section id="playfield" class="playfield" aria-label="Typing Arena">
 
                 <div id="wordLayer" class="word-layer" aria-live="off"></div>
+
+                <div id="dangerLine" class="danger-line">
+                    <span>DANGER LINE</span>
+                </div>
 
                 <div class="center-card" id="startCard">
                     <span class="badge">KEYBOARD ONLY</span>
