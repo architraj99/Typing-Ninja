@@ -9,6 +9,11 @@ const typingDock = document.getElementById('typingDock');
 const typedText = document.getElementById('typedText');
 const livesText = document.getElementById('lives');
 
+const scoreText = document.getElementById('score');
+const streakText = document.getElementById('streak');
+const accuracyText = document.getElementById('accuracy');
+const clearedText = document.getElementById('cleared');
+
 const wordBank = ['array', 'buffer', 'branch', 'canvas', 'client' , 'compile',
     'cursor', 'debug', 'deploy', 'domain', 'encode', 'engine', 'event', 'frame',
     'function', 'index', 'input', 'kettle', 'keyboard', 'logic', 'memory',
@@ -23,6 +28,12 @@ let spawnDelay = 1650;
 let typedBuffer = '';
 let activeTarget = null;
 let lives = 3;
+
+let score = 0;
+let streak = 0;
+let cleared = 0;
+let correctKeys = 0;
+let totalKeys = 0;
 
 function randomWord() {
     return wordBank[Math.floor(Math.random() * wordBank.length)];
@@ -61,6 +72,42 @@ function updateWords(delta){
     }
 }    
 
+function updateStats() {
+    const accuracy = totalKeys ? Math.round((correctKeys / totalKeys) * 100) : 100;
+    scoreText.textContent = String(score).padStart(4, '0');
+    streakText.textContent = String(streak);
+    accuracyText.textContent = `${accuracy}%`;
+    clearedText.textContent = String(cleared);
+}
+
+function registerCorrectKey(){
+    correctKeys += 1;
+    totalKeys += 1;
+    updateStats();
+}
+
+function registerWrongKey() {
+    totalKeys += 1;
+    streak = 0;
+    updateStats();
+}
+
+function scoreWord(word) {
+    cleared += 1;
+    streak += 1;
+    score += word.text.length * 10 + Math.min(streak, 10) * 5;
+    updateStats();
+}
+
+function resetStats() {
+    score = 0;
+    streak = 0;
+    cleared = 0;
+    correctKeys = 0;
+    totalKeys = 0;
+    updateStats();
+}
+
 function renderWord(word, matched = 0) {
 
     const done = word.text.slice(0, matched);
@@ -95,6 +142,8 @@ function setTarget(word)  {
 }
 
 function completeWord(word) {
+    scoreWord(word);
+    word.element.classList.add('cleared');
     removeWord(word);
     activeTarget = null;
     typedBuffer = '';
@@ -126,9 +175,11 @@ function handleTyping(key) {
     const target = activeTarget && activeTarget.text.startsWith(typedBuffer) ? activeTarget : selectTarget(typedBuffer);
 
     if(!target) {
+        registerWrongKey();
         resetTyping();
         return;
     }
+    if(key !== 'Backspace') registerCorrectKey();
     setTarget(target);
     typedText.textContent = typedBuffer;
     if(typedBuffer === target.text) completeWord(target);
@@ -144,6 +195,8 @@ function loseLife() {
     if(word === activeTarget) resetTyping();
     removeWord(word);
     lives = Math.max(0, lives - 1);
+    streak = 0;
+    updateStats();
     updateLives();
     playfield.classList.remove('hit');
     void playfield.offsetWidth;
@@ -153,12 +206,12 @@ function loseLife() {
 
         running = false;
         typingDock.hidden = true;
-        startCard.hidden = true;
+        startCard.hidden = false;
         startCard.classList.add('fail');
 
         startCard.querySelector('h2').textContent = 'Out of lives';
         startCard.querySelector('p').textContent = 'Three Misses. The run is OVER';
-        startCard.querySelector('start-key').textContent = 'PRESS ENTER TO PLAY AGAIN';
+        startCard.querySelector('.start-key').textContent = 'PRESS ENTER TO PLAY AGAIN';
     }
 }
 
@@ -186,6 +239,7 @@ function startGame() {
         lives = 3;
         clearFallingWords();
         updateLives();
+        resetStats();
         startCard.classList.remove('fail');
     }
 
