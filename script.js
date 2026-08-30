@@ -14,6 +14,10 @@ const streakText = document.getElementById('streak');
 const accuracyText = document.getElementById('accuracy');
 const clearedText = document.getElementById('cleared');
 
+const wpmValue = document.getElementById('wpmValue');
+const wpmFill = document.getElementById('wpmFill');
+const placeLabel = document.getElementById('placeLabel');
+
 const wordBank = ['array', 'buffer', 'branch', 'canvas', 'client' , 'compile',
     'cursor', 'debug', 'deploy', 'domain', 'encode', 'engine', 'event', 'frame',
     'function', 'index', 'input', 'kettle', 'keyboard', 'logic', 'memory',
@@ -72,12 +76,35 @@ function updateWords(delta){
     }
 }    
 
+function calculateWpm() {
+    if(!startedAt || correctKeys === 0) return 0;
+    const minutes = Math.max((Date.now() - startedAt) / 60000, 1 / 60);
+    return Math.round((correctKeys / 5) / minutes);
+}
+
+function paceText(wpm) {
+    if(wpm >= 90) return 'NINJA PACE';
+    if(wpm >= 65) return 'FAST HANDS';
+    if(wpm >= 40) return 'STEADY';
+    if(wpm >= 20) return 'WARMING UP';
+
+    return 'BUILDING PACE';
+}
+
+function updateWpm() {
+    const wpm = calculateWpm();
+    wpmValue.textContent = String(wpm);
+    wpmFill.style.width = `${Math.min(100, (wpm / 120) * 100)}%`;
+    placeLabel.textContent = paceText(wpm);
+}
+
 function updateStats() {
     const accuracy = totalKeys ? Math.round((correctKeys / totalKeys) * 100) : 100;
     scoreText.textContent = String(score).padStart(4, '0');
     streakText.textContent = String(streak);
     accuracyText.textContent = `${accuracy}%`;
     clearedText.textContent = String(cleared);
+    updateWpm();
 }
 
 function registerCorrectKey(){
@@ -190,7 +217,7 @@ function updateLives() {
          (_, index) => index < lives ? '♥' : '.' ).join(' ');
 }
 
-function loseLife() {
+function loseLife(word) {
 
     if(word === activeTarget) resetTyping();
     removeWord(word);
@@ -259,6 +286,7 @@ function updateClock() {
     const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
     const rest = String(seconds % 60).padStart(2, '0');
     clock.textContent = `${minutes}:${rest}`;
+    updateWpm();
     requestAnimationFrame(updateClock);
 }
 

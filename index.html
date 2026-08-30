@@ -19,9 +19,13 @@
                 <div class="status-strip">
 
                     <span>SCORE <strong id="score">0000</strong> </span>
+
                     <span>STREAK <strong id="streak">0</strong> </span>
+
                     <span>ACC <strong id="accuracy">100%</strong> </span>
+
                     <span>TIME <strong id="clock">00:00</strong> </span>
+
                     <span class="life-box">LIVES <strong id="lives">♥ ♥ ♥</strong> </span>
                 </div>
             </header>
@@ -29,6 +33,17 @@
             <section id="playfield" class="playfield" aria-label="Typing Arena">
 
                 <div id="wordLayer" class="word-layer" aria-live="off"></div>
+
+                <aside id="wpmMeter" class="wpm-meter" aria-label="Live words per minute">
+                    <span>LIVE WPM</span>
+                    <strong id="wpmValue">0</strong>
+
+                    <div class="wpm-track">
+                        <i id="wpmFill" class="wpm-fill"></i>
+                    </div>
+
+                    <small id="placeLabel">BULDING PACE</small>
+                </aside>
 
                 <div id="dangerLine" class="danger-line">
                     <span>DANGER LINE</span>

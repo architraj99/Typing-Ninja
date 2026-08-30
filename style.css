@@ -260,3 +260,70 @@ h1 {
 #score {
     min-width: 48px;
 }
+
+.wpm-meter {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 138px;
+    padding: 12px;
+    border: 1px solid #2f3231;
+    background: #0a0c0c;
+    z-index: 3;
+}
+
+.wpm-meter > span {
+    color: #747a75;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+}
+
+.wpm-meter strong {
+    display: block;
+    margin: 5px 0 8px;
+    color: #e9e6de;
+    font-size: 34px;
+    line-height: 1;
+}
+
+.wpm-track {
+    height: 3px;
+    background: #252827;
+    overflow:hidden;
+}
+
+.wpm-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: #8da17f;
+    transition: width 180ms linear;
+}
+
+.wpm-meter small {
+    display: block;
+    margin-top: 8px;
+    color: #666b67;
+    font-size: 8px;
+    letter-spacing: 0.08em;
+}
+
+@media(max-width: 900px ) {
+    .wpm-meter {
+        top: 12px;
+        left: 12px;
+        width: 112px;
+        padding: 10px;
+    }
+
+    .wpm-meter strong {
+        font-size: 28px;
+    }
+    .wpm-meter small {
+        display: none;
+    }
+}
+
+#wpmValue {
+    font-variant-numeric: tabular-nums;
+}
