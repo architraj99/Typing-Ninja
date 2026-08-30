@@ -36,7 +36,7 @@
 
                 <div id="wordLayer" class="word-layer" aria-live="off"></div>
 
-                <div id="levelBanner" class="level-banner" hidden>LEVEL<strong>1</strong> </div>
+                <div id="levelBanner" class="level-banner" hidden>LEVEL <strong>1</strong> </div>
 
                 <aside id="wpmMeter" class="wpm-meter" aria-label="Live words per minute">
                     <span>LIVE WPM</span>
@@ -46,7 +46,7 @@
                         <i id="wpmFill" class="wpm-fill"></i>
                     </div>
 
-                    <small id="placeLabel">BULDING PACE</small>
+                    <small id="paceLabel">BUILDING PACE</small>
                 </aside>
 
                 <div id="dangerLine" class="danger-line">
@@ -58,6 +58,26 @@
                     <h2>Words fall. You Type.</h2>
                     <p>Clear each word before it reaches the floor.</p>
                     <p class="start-key">PRESS ENTER TO START</p>
+                </div>
+
+                <div class="center-card pause-card" id="pausedCard" hidden>
+                    <span class="badge">PAUSED</span>
+                    <h2>Hands off the keys.</h2>
+                    <p> Your timer and falling words are frozen.</p>
+                    <p class="start-key">PRESS ESC TO CONTINUE</p>
+                </div>
+
+                <div class="center-card game-over-card" id="gameOverCard" hidden>
+                    <span class="badge">RUN OVER</span>
+                    <h2>Keyboard Down.</h2>
+
+                    <div class="final-stats">
+                        <span>SCORE <strong id="finalScore">0</strong> </span>
+                        <span>WPM <strong id="finalWpm">0</strong> </span>
+                        <span>ACC <strong id="finalAccuracy">100%</strong> </span>
+                    </div>
+
+                    <p class="start-key">PRESS R TO RESTART</p>
                 </div>
 
                 <div class="typing-dock" id="typingDock" hidden>

@@ -16,10 +16,16 @@ const clearedText = document.getElementById('cleared');
 
 const wpmValue = document.getElementById('wpmValue');
 const wpmFill = document.getElementById('wpmFill');
-const placeLabel = document.getElementById('placeLabel');
+const paceLabel = document.getElementById('paceLabel');
 
 const levelText = document.getElementById('level');
 const levelBanner = document.getElementById('levelBanner');
+
+const pausedCard = document.getElementById('pausedCard');
+const gameOverCard = document.getElementById('gameOverCard');
+const finalScore = document.getElementById('finalScore');
+const finalWpm = document.getElementById('finalWpm');
+const finalAccuracy = document.getElementById('finalAccuracy');
 
 const wordBank = ['array', 'buffer', 'branch', 'canvas', 'client' , 'compile',
     'cursor', 'debug', 'deploy', 'domain', 'encode', 'engine', 'event', 'frame',
@@ -45,6 +51,9 @@ let totalKeys = 0;
 let level = 1;
 let lastAnnouncedLevel = 1;
 
+let paused = false;
+let pauseStartedAt = 0;
+
 function randomWord() {
     return wordBank[Math.floor(Math.random() * wordBank.length)];
 }
@@ -58,7 +67,7 @@ function spawnWord() {
         element,
         x: 24 + Math.random() * (maxX - 24),
         y: -38,
-        speed: 42 + Math.random() * 24
+        speed: getWordSpeed()
     };
     element.className = 'falling-word';
     element.textContent = text;
@@ -73,7 +82,7 @@ function removeWord(word) {
 }
 
 function updateWords(delta){
-    const floor = playfield.clientHeight + 45;
+    const floor = playfield.clientHeight - 68;
     for(const word of [...fallingWords]) {
         word.y += word.speed * delta;
         word.element.style.transform = `translate3d(${word.x}px, ${word.y}px, 0)`;
@@ -143,7 +152,7 @@ function updateWpm() {
     const wpm = calculateWpm();
     wpmValue.textContent = String(wpm);
     wpmFill.style.width = `${Math.min(100, (wpm / 120) * 100)}%`;
-    placeLabel.textContent = paceText(wpm);
+    paceLabel.textContent = paceText(wpm);
 }
 
 function updateStats() {
@@ -282,18 +291,54 @@ function loseLife(word) {
     playfield.classList.remove('hit');
     void playfield.offsetWidth;
     playfield.classList.add('hit');
+    if(lives === 0) endGame();
 
-    if(lives === 0) {
+}
 
-        running = false;
-        typingDock.hidden = true;
-        startCard.hidden = false;
-        startCard.classList.add('fail');
+function endGame() {
+    running = false;
+    paused = false;
+    typingDock.hidden = true;
+    pausedCard.hidden = true;
+    finalScore.textContent = String(score);
+    finalWpm.textContent = String(calculateWpm());
 
-        startCard.querySelector('h2').textContent = 'Out of lives';
-        startCard.querySelector('p').textContent = 'Three Misses. The run is OVER';
-        startCard.querySelector('.start-key').textContent = 'PRESS ENTER TO PLAY AGAIN';
+    const accuracy = totalKeys ? Math.round((correctKeys / totalKeys) * 100) : 100;
+    finalAccuracy.textContent = `${accuracy}%`;
+    gameOverCard.hidden = false;
+}
+
+function pauseGame() {
+    if(!running) return;
+    paused = !paused;
+    pausedCard.hidden = !paused;
+    typingDock.hidden = paused;
+
+    if(paused) {
+        pauseStartedAt = Date.now();
     }
+    else {
+        startedAt += Date.now() - pauseStartedAt;
+        lastFrame = performance.now();
+    }
+
+}
+
+function restartGame() {
+    running = false;
+    paused = false;
+    clearFallingWords();
+
+    lives = 3;
+    updateLives();
+    resetStats();
+
+    clock.textContent = '00:00';
+    gameOverCard.hidden = true;
+    pausedCard.hidden = true;
+    startCard.hidden = true;
+    typingDock.hidden = false;
+    startGame();
 }
 
 function clearFallingWords() {
@@ -304,6 +349,12 @@ function clearFallingWords() {
 function gameLoop(time) {
     
     if(!running) return;
+
+    if(paused) {
+        lastFrame = time;
+        requestAnimationFrame(gameLoop);
+        return;
+    }
     const delta = Math.min((time - lastFrame) / 1000 || 0, 0.04);
     lastFrame = time;
     if(time - lastSpawn >= spawnDelay) {
@@ -336,6 +387,12 @@ function startGame() {
 
 function updateClock() {
     if(!running) return;
+
+    if(paused) {
+        requestAnimationFrame(updateClock);
+        return;
+    }
+
     const seconds = Math.floor((Date.now() - startedAt) / 1000);
     const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
     const rest = String(seconds % 60).padStart(2, '0');
@@ -345,11 +402,21 @@ function updateClock() {
 }
 
 window.addEventListener('keydown', event => {
-    if(event.key === 'Enter' && !running) {
+    
+    if(event.key === 'Escape') {
+        pauseGame();
+        return;
+    }
+    if(event.key.toLowerCase() === 'r' && !running){
+        restartGame();
+        return;
+    }
+
+    if(event.key === 'Enter' && !running && lives > 0) {
         startGame();
         return;
     }
-    if(!running) return;
+    if(!running || paused) return;
     if(event.key === 'Backspace') event.preventDefault();
     handleTyping(event.key);
 });

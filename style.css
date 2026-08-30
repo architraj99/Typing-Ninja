@@ -370,3 +370,42 @@ h1 {
 #level {
     font-variant-numeric: tabular-nums;
 }
+
+.pause-card, 
+.game-over-card {
+    padding: 26px;
+    border: 1px solid #303332;
+    background: #0b0d0d;
+}
+
+.pause-card h2 {
+    color: #d0a34f;
+}
+
+.game-over-card h2 {
+    color: #c46d67;
+}
+
+.final-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 24px 0 20px;
+}
+
+.final-stats span {
+    padding: 10px 8px;
+    border: 1px solid #292c2b;
+    color: #777c78;    
+    font-size: 9px;
+    letter-spacing: 0.12em;
+}
+
+.final-stats strong {
+    display: block;
+    margin-top: 5px;
+    color: #e7e4dc;
+    font-size: 19px;
+}
+
+body:has(.pause-card:not([hidden])) .word-layer {opacity: 0.42;}
