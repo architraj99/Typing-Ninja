@@ -18,6 +18,9 @@ const wpmValue = document.getElementById('wpmValue');
 const wpmFill = document.getElementById('wpmFill');
 const placeLabel = document.getElementById('placeLabel');
 
+const levelText = document.getElementById('level');
+const levelBanner = document.getElementById('levelBanner');
+
 const wordBank = ['array', 'buffer', 'branch', 'canvas', 'client' , 'compile',
     'cursor', 'debug', 'deploy', 'domain', 'encode', 'engine', 'event', 'frame',
     'function', 'index', 'input', 'kettle', 'keyboard', 'logic', 'memory',
@@ -38,6 +41,9 @@ let streak = 0;
 let cleared = 0;
 let correctKeys = 0;
 let totalKeys = 0;
+
+let level = 1;
+let lastAnnouncedLevel = 1;
 
 function randomWord() {
     return wordBank[Math.floor(Math.random() * wordBank.length)];
@@ -75,6 +81,48 @@ function updateWords(delta){
         if(word.y > floor) loseLife(word);
     }
 }    
+
+const difficulty = {
+    wordsPerLevel: 6,
+    baseDelay: 1650,
+    minimumDelay: 620,
+    delayStep: 115,
+    baseSpeed: 42,
+    speedStep: 6
+};
+
+function getSpawnDelay() {
+    return Math.max(difficulty.minimumDelay, difficulty.baseDelay - (level - 1) * difficulty.delayStep);
+}
+
+function getWordSpeed() {
+    const levelBoost = (level - 1) * difficulty.speedStep;
+    return difficulty.baseSpeed + levelBoost + Math.random() * 24;
+}
+
+function announceLevel() {
+
+    levelBanner.querySelector('strong').textContent = String(level);
+    levelBanner.hidden = false;
+    levelBanner.classList.add('show');
+    playfield.classList.add('level-up');
+    setTimeout(() => {
+        levelBanner.classList.remove('show');
+        levelBanner.hidden = true;
+        playfield.classList.remove('level-up');
+    }, 900);
+}
+
+function updateDifficulty() {
+    level = Math.floor(cleared / difficulty.wordsPerLevel) + 1;
+    levelText.textContent = String(level);
+    spawnDelay = getSpawnDelay();
+
+    if(level > lastAnnouncedLevel) {
+        lastAnnouncedLevel = level;
+        announceLevel();
+    }
+}
 
 function calculateWpm() {
     if(!startedAt || correctKeys === 0) return 0;
@@ -123,6 +171,7 @@ function scoreWord(word) {
     cleared += 1;
     streak += 1;
     score += word.text.length * 10 + Math.min(streak, 10) * 5;
+    updateDifficulty();
     updateStats();
 }
 
@@ -132,6 +181,11 @@ function resetStats() {
     cleared = 0;
     correctKeys = 0;
     totalKeys = 0;
+
+    level = 1;
+    lastAnnouncedLevel = 1;
+    spawnDelay = getSpawnDelay();
+    levelText.textContent = '1';
     updateStats();
 }
 
