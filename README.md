@@ -10,7 +10,7 @@ You get 3 lives....
 . If a word reaches the bottom ... you lose one life
 
 ## AI usage
-i used ai to just implement the LIVE WPM system which goes along with every word you type
+i used ai for styling and used it to  implement the LIVE WPM system which goes along with every word you type
 
 ## Controls
 
