@@ -9,6 +9,9 @@ You get 3 lives....
 
 . If a word reaches the bottom ... you lose one life
 
+## AI usage
+i used ai to just implement the LIVE WPM system which goes along with every word you type
+
 ## Controls
 
 * click on Enter to  Start game
